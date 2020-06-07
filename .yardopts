@@ -1,0 +1,10 @@
+--type-name-tag url:"URL"
+--type-name-tag action:"Action"
+--type-name-tag required:"Required"
+
+--private
+-o docs
+
+app/controllers/users_controller.rb
+app/models/user.rb
+app/helpers/users_helper.rb

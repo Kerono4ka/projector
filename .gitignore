@@ -81,3 +81,7 @@ dump.rdb
 
 # SimpleCov public folder
 public/coverage
+
+# YARDoc folder
+.yardoc/
+docs/
