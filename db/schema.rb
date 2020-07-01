@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_29_152731) do
+ActiveRecord::Schema.define(version: 2020_06_13_125005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,28 @@ ActiveRecord::Schema.define(version: 2020_05_29_152731) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
+  create_table "audits", force: :cascade do |t|
+    t.integer "auditable_id"
+    t.string "auditable_type"
+    t.integer "associated_id"
+    t.string "associated_type"
+    t.integer "user_id"
+    t.string "user_type"
+    t.string "username"
+    t.string "action"
+    t.text "audited_changes"
+    t.integer "version", default: 0
+    t.string "comment"
+    t.string "remote_address"
+    t.string "request_uuid"
+    t.datetime "created_at"
+    t.index ["associated_type", "associated_id"], name: "associated_index"
+    t.index ["auditable_type", "auditable_id", "version"], name: "auditable_index"
+    t.index ["created_at"], name: "index_audits_on_created_at"
+    t.index ["request_uuid"], name: "index_audits_on_request_uuid"
+    t.index ["user_id", "user_type"], name: "user_index"
+  end
+
   create_table "boards", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -67,6 +89,8 @@ ActiveRecord::Schema.define(version: 2020_05_29_152731) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "assignee_id"
     t.datetime "discarded_at"
+    t.date "start_date"
+    t.integer "duration", default: 0
     t.index ["assignee_id"], name: "index_cards_on_assignee_id"
     t.index ["column_id"], name: "index_cards_on_column_id"
     t.index ["discarded_at"], name: "index_cards_on_discarded_at"
@@ -113,6 +137,18 @@ ActiveRecord::Schema.define(version: 2020_05_29_152731) do
     t.index ["board_id", "user_id"], name: "index_memberships_on_board_id_and_user_id", unique: true
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.string "type"
+    t.string "notificationable_type", null: false
+    t.bigint "notificationable_id", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["notificationable_type", "notificationable_id"], name: "index_on_notificationable_type_and_notificationable_id"
+    t.index ["type"], name: "index_notifications_on_type"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   create_table "taggings", id: :serial, force: :cascade do |t|
     t.integer "tag_id"
     t.string "taggable_type"
@@ -157,8 +193,10 @@ ActiveRecord::Schema.define(version: 2020_05_29_152731) do
     t.string "provider"
     t.string "uid"
     t.boolean "receive_emails", default: false
+    t.string "jti"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -174,5 +212,6 @@ ActiveRecord::Schema.define(version: 2020_05_29_152731) do
   add_foreign_key "likes", "users"
   add_foreign_key "memberships", "boards"
   add_foreign_key "memberships", "users"
+  add_foreign_key "notifications", "users"
   add_foreign_key "taggings", "tags"
 end

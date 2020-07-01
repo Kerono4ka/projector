@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Cards
+  # Service that accepts +card, column and two arrays+ and updates position of the card on column
   class UpdatePositionService < ApplicationService
     attr_reader :card,
                 :column,
@@ -6,7 +9,8 @@ module Cards
                 :source_cards_ids
 
     def initialize(card, column, target_cards_ids, source_cards_ids = nil)
-      @card, @column = card, column
+      @card = card
+      @column = column
       @target_cards_ids = eval(target_cards_ids) if source_cards_ids.is_a? String
       @source_cards_ids = eval(source_cards_ids) if source_cards_ids.is_a? String
     end
@@ -15,23 +19,22 @@ module Cards
       Card.transaction do
         update_cards_position(target_cards_ids)
         update_cards_position(source_cards_ids) if source_cards_ids.present?
-        send_email
+        create_notification
         return true, []
       rescue ActiveRecord::RecordInvalid => e
         return false, e.record.errors.full_messages
       end
     end
-    
-    def send_email
-      return if card.column == column
-      
-      card.notification_receivers.each do |user|
-        next if user.receive_emails == false
-        CardMailer.with(card: card, user: user).update_card_position.deliver_later
-      end
-    end
 
     private
+
+    def create_notification
+      return if card.column == column
+
+      NotificationJobs::CreateNotification.perform_later(
+        'MoveCardNotificationService', card
+      )
+    end
 
     def update_cards_position(card_ids)
       card_ids.each_with_index do |card_id, index|

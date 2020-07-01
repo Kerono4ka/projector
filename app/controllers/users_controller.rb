@@ -1,4 +1,10 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
+  # Return users.json
+  # @action GET
+  # @url /users
+  # @return [JSON] includes all users
   def index
     @users = User.search(params[:search]).limit(10)
 
@@ -7,5 +13,9 @@ class UsersController < ApplicationController
     end
   end
 
+  # Show current_user
+  # @action GET
+  # @url /user
+  # @return [User]
   def show; end
 end

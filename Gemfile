@@ -25,6 +25,9 @@ gem 'jbuilder', '~> 2.7'
 gem 'image_processing'
 gem 'aws-sdk-s3', require: false
 
+# Client library for Amazon's Simple Email Service's REST API
+gem 'aws-ses', '~> 0.6.0'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
@@ -40,6 +43,8 @@ gem 'pg_search'
 gem 'sidekiq'
 gem 'redis'
 gem 'devise-async'
+# Clean ruby syntax for writing and deploying cron jobs.
+gem 'whenever', '~> 0.9.4', require: false
 
 # This gem automatically creates both digest and non-digest assets which are useful for many reasons.
 gem 'non-stupid-digest-assets', '~> 1.0', '>= 1.0.9'
@@ -49,8 +54,16 @@ gem 'discard'
 
 # Facebook OAuth2 Strategy for OmniAuth
 gem 'omniauth-facebook', '~> 6.0'
+#A lightweight Facebook library supporting the Graph, Marketing, and Atlas APIs, realtime updates, test users, and OAuth.
+gem "koala", '~> 3.0.0'
 # Access for users
 gem 'cancancan'
+# For json tests
+
+# Log all changes to your models
+gem 'audited', '~> 4.9'
+# A pure ruby implementation of the RFC 7519 OAuth JSON Web Token (JWT) standard.
+gem 'jwt', '~> 2.2', '>= 2.2.1'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -67,11 +80,19 @@ group :development, :test do
   gem 'rails-controller-testing', '~> 1.0', '>= 1.0.4'
   # Nokogiri based 'have_tag' and 'with_tag' matchers for rspec 3
   gem 'rspec-html-matchers', '~> 0.9.2'
+  # Set of matchers and helpers to allow you test your APIs responses like a pro.
+  gem 'rspec-json_expectations', '~> 1.2'
   # Faker is used to easily generate fake data: names, addresses, phone numbers, etc.
   gem 'faker', '~> 2.11'
+
   # Code coverage for Ruby with a powerful configuration library and automatic merging of coverage across test suites
   gem 'simplecov', '~> 0.18.5', require: false
-  gem 'database_cleaner'
+  # Simple console output formatter for SimpleCov
+  gem 'simplecov-console', '~> 0.7.2', require: false
+  # Hosted code coverage
+  gem 'codecov', '~> 0.1.17', require: false
+  # Strategies for cleaning databases in Ruby. Can be used to ensure a clean state for testing.
+  gem 'database_cleaner', '~> 1.8.5'
 end
 
 group :development do
@@ -101,4 +122,3 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
-

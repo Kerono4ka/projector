@@ -1,24 +1,14 @@
+# frozen_string_literal: true
+
 class CardMailer < ApplicationMailer
-  before_action { @card, @user = params[:card], params[:user] }
-  default from: "not-replay@projector.com"
-  
-  def new_assignee
-    send_mail("User #{@card.assignee.first_name} were tagged as a assignee at the card \"#{@card.title}\"")
+  before_action do
+    @card = params[:card]
+    @user = params[:user]
   end
 
-  def added_comment
-    send_mail("New comment added to the \"#{@card.title}\"")
-  end
-
-  def update_card_position
-    send_mail("Card \"#{@card.title}\" was moved to another column")
-  end
-
-  private
-  def send_mail(subject)
+  def start_date_notify
     @board = @card.column.board
-    @column = @card.column
     @assignee = @card.assignee
-    mail(to: @user.email, subject: subject)
+    mail(to: @user.email, subject: "Card \"#{@card.title}\" planed for today.")
   end
 end

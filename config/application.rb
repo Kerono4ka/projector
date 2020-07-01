@@ -31,7 +31,11 @@ module Projector
 
     # Don't generate system test files.
     config.generators.system_tests = nil
-    #Sidekiq
+    # Sidekiq
     config.active_job.queue_adapter = :sidekiq
+    # Set time zone
+    config.time_zone = 'Europe/Kiev'
+    # For login throw API using facebook access token
+    Koala.config.api_version = 'v2.0'
   end
 end
